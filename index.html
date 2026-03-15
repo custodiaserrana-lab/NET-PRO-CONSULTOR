@@ -1,6 +1,314 @@
-import { useState, useRef, useEffect } from "react";
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NETPRO - Especialista en Redes</title>
+<style>
+  /* Reset y tipografía base */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0a0a;
+    color: #d0d0d0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+  /* Fondos fijos */
+  .bg-grid {
+    position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px), 
+                      linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+    background-size: 60px 60px; pointer-events: none; z-index: -2;
+  }
+  .bg-glow {
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse 70% 50% at 15% 20%, rgba(232,255,0,0.04) 0%, transparent 60%);
+    pointer-events: none; z-index: -1;
+  }
 
-const SYSTEM_PROMPT = `Sos un especialista en redes de comunicaciones con más de 50 años de experiencia profesional. Tenés posgrado y magistrado en telecomunicaciones. Sos experto en redes hogareñas y empresariales, especialmente en:
+  /* Contenedor principal */
+  .container { max-width: 960px; margin: 0 auto; padding: 0 20px; position: relative; }
+
+  /* Utilidades Header */
+  header { border-bottom: 1px solid #2a2a2a; padding: 28px 0 24px; }
+  .h-title { font-size: clamp(40px, 8vw, 64px); font-weight: 900; line-height: 1; color: #f0f0f0; letter-spacing: 2px; }
+  .tag { 
+    display: flex; align-items: center; gap: 8px; padding: 5px 12px; 
+    border: 1px solid #2a2a2a; background: #1a1a1a; border-radius: 2px; 
+    font-family: monospace; font-size: 11px; color: #aaa; white-space: nowrap; 
+  }
+  .tag-dot { width: 6px; height: 6px; border-radius: 50%; background: #00ffa3; display: inline-block; }
+
+  /* Métricas */
+  .metrics {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+    gap: 1px; background: #2a2a2a; border: 1px solid #2a2a2a; margin: 28px 0;
+  }
+  .metric-box { background: #141414; padding: 20px 16px; }
+
+  /* Tabs */
+  .tabs { display: flex; border-bottom: 1px solid #2a2a2a; flex-wrap: wrap; }
+  .tab-btn {
+    padding: 12px 20px; background: transparent; border: none; border-bottom: 2px solid transparent;
+    color: #666; cursor: pointer; font-family: monospace; font-size: 12px; letter-spacing: 1px; transition: all 0.2s;
+  }
+  .tab-btn.active { background: #1a1a1a; border-bottom-color: #e8ff00; color: #e8ff00; }
+  .tab-content { display: none; margin-bottom: 40px; }
+  .tab-content.active { display: block; }
+
+  /* Chat */
+  #tab-chat { border: 1px solid #2a2a2a; border-top: none; background: #0d0d0d; }
+  .quick-chips { display: flex; gap: 8px; flex-wrap: wrap; padding: 12px 16px; border-bottom: 1px solid #1e1e1e; }
+  .chip {
+    padding: 5px 12px; border: 1px solid #2a2a2a; background: #141414; color: #aaa; 
+    font-size: 12px; font-family: monospace; cursor: pointer; border-radius: 2px; transition: all 0.2s;
+  }
+  .chip:hover { border-color: #00ffa3; color: #00ffa3; }
+  
+  .chat-messages { padding: 16px; display: flex; flex-direction: column; gap: 12px; max-height: 420px; overflow-y: auto; }
+  .bubble { max-width: 82%; padding: 12px 16px; font-size: 14px; line-height: 1.65; white-space: pre-wrap; }
+  .bubble.user { align-self: flex-end; background: rgba(0,255,163,0.07); border: 1px solid rgba(0,255,163,0.2); color: #f0f0f0; text-align: right; }
+  .bubble.assistant { align-self: flex-start; background: #1a1a1a; border: 1px solid #2a2a2a; border-left: 3px solid #e8ff00; color: #d0d0d0; text-align: left; }
+  
+  .chat-input-area { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid #1e1e1e; }
+  #chat-input {
+    flex: 1; background: #141414; border: 1px solid #2a2a2a; color: #d0d0d0; 
+    padding: 10px 14px; font-family: inherit; font-size: 14px; outline: none; border-radius: 2px;
+  }
+  #chat-input:focus { border-color: #e8ff00; }
+  #btn-send {
+    background: #e8ff00; color: #0a0a0a; border: none; padding: 10px 24px; font-weight: 900; 
+    font-size: 14px; letter-spacing: 1px; cursor: pointer; border-radius: 2px; transition: all 0.2s;
+  }
+  #btn-send:disabled { background: #333; cursor: not-allowed; color: #888; }
+
+  /* Animación Loading */
+  @keyframes bounce { 0%,60%,100% { opacity:0.3; transform:translateY(0); } 30% { opacity:1; transform:translateY(-4px); } }
+  .loading-dots { display: flex; gap: 5px; padding: 12px 16px; background: #1a1a1a; border: 1px solid #2a2a2a; border-left: 3px solid #e8ff00; width: fit-content; align-items: center; align-self: flex-start; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #e8ff00; }
+  .dot:nth-child(1) { animation: bounce 1.2s 0s infinite; }
+  .dot:nth-child(2) { animation: bounce 1.2s 0.2s infinite; }
+  .dot:nth-child(3) { animation: bounce 1.2s 0.4s infinite; }
+
+  /* Config & Pasos */
+  #tab-config { border: 1px solid #2a2a2a; border-top: none; background: #141414; }
+  .config-row { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 16px; padding: 14px 20px; border-bottom: 1px solid #1e1e1e; align-items: center; }
+  
+  .step-row {
+    display: grid; grid-template-columns: 48px 1fr auto; gap: 16px; padding: 18px 20px; 
+    border: 1px solid #2a2a2a; background: #141414; align-items: start; transition: all 0.2s; cursor: default;
+  }
+  .step-row:hover { transform: translateX(4px); border-color: var(--hover-color); }
+  
+  /* Footer */
+  footer { border-top: 1px solid #1e1e1e; padding: 24px 0; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+
+  /* API Key Input (Mini barra arriba) */
+  .api-bar { background: #1a1a1a; border-bottom: 1px solid #e8ff0044; padding: 8px 20px; display: flex; gap: 10px; align-items: center; font-size: 12px; font-family: monospace; }
+  .api-bar input { background: #0a0a0a; border: 1px solid #444; color: #00ffa3; padding: 4px 8px; width: 250px; outline: none; }
+</style>
+</head>
+<body>
+
+  <!-- Backgrounds -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <!-- Barra de Configuración de API Key -->
+  <div class="api-bar">
+    <span style="color:#aaa;">API Key de Anthropic:</span>
+    <input type="password" id="api-key" placeholder="sk-ant-..." onchange="saveKey()">
+    <span style="color:#666;">(Se guarda localmente para el chat)</span>
+  </div>
+
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <div style="font-family: monospace; font-size: 11px; color: #e8ff00; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 4px;">// especialista certificado en redes</div>
+          <div class="h-title">NET<span style="color: #e8ff00">PRO</span></div>
+          <div style="font-size: 13px; color: #aaa; margin-top: 4px;">Consultoría Avanzada · Redes Hogareñas & Empresariales</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
+          <div class="tag"><span class="tag-dot"></span>50+ años de experiencia</div>
+          <div class="tag"><span class="tag-dot"></span>Posgrado + Magistrado Telecomunicaciones</div>
+          <div class="tag"><span class="tag-dot"></span>Experto Huawei / Streaming / IPTV</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MÉTRICAS -->
+    <div class="metrics">
+      <div class="metric-box">
+        <div style="font-size: 36px; font-weight: 900; color: #e8ff00; line-height: 1;">80%</div>
+        <div style="font-family: monospace; font-size: 11px; color: #666; margin-top: 4px; line-height: 1.4;">fallas resueltas con config</div>
+      </div>
+      <div class="metric-box">
+        <div style="font-size: 36px; font-weight: 900; color: #e8ff00; line-height: 1;">4K</div>
+        <div style="font-family: monospace; font-size: 11px; color: #666; margin-top: 4px; line-height: 1.4;">streaming estable 25 Mbps</div>
+      </div>
+      <div class="metric-box">
+        <div style="font-size: 36px; font-weight: 900; color: #e8ff00; line-height: 1;"><20ms</div>
+        <div style="font-family: monospace; font-size: 11px; color: #666; margin-top: 4px; line-height: 1.4;">latencia con QoS activo</div>
+      </div>
+      <div class="metric-box">
+        <div style="font-size: 36px; font-weight: 900; color: #e8ff00; line-height: 1;">Wi-Fi 6</div>
+        <div style="font-family: monospace; font-size: 11px; color: #666; margin-top: 4px; line-height: 1.4;">estándar recomendado</div>
+      </div>
+    </div>
+
+    <!-- TABS NAV -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="setTab('chat')">💬 Consultá al Especialista</button>
+      <button class="tab-btn" onclick="setTab('config')">⚙️ Config Huawei</button>
+      <button class="tab-btn" onclick="setTab('pasos')">📋 Protocolo de Optimización</button>
+    </div>
+
+    <!-- TAB: CHAT -->
+    <div id="tab-chat" class="tab-content active">
+      <div class="quick-chips">
+        <button class="chip" onclick="setInput('¿Por qué se tilda mi Huawei?')">¿Por qué se tilda mi Huawei?</button>
+        <button class="chip" onclick="setInput('Ver fútbol sin cortes')">Ver fútbol sin cortes</button>
+        <button class="chip" onclick="setInput('Mejorar WiFi para streaming')">Mejorar WiFi para streaming</button>
+        <button class="chip" onclick="setInput('Configurar DNS rápido')">Configurar DNS rápido</button>
+        <button class="chip" onclick="setInput('¿Necesito otro router?')">¿Necesito otro router?</button>
+        <button class="chip" onclick="setInput('Cable directo vs WiFi')">Cable directo vs WiFi</button>
+      </div>
+
+      <div id="chat-messages" class="chat-messages">
+        <!-- Messages rendered via JS -->
+      </div>
+
+      <div class="chat-input-area">
+        <input type="text" id="chat-input" placeholder="Describí tu problema de red..." onkeypress="if(event.key==='Enter') send()">
+        <button id="btn-send" onclick="send()">ENVIAR</button>
+      </div>
+    </div>
+
+    <!-- TAB: CONFIG HUAWEI -->
+    <div id="tab-config" class="tab-content">
+      <div style="padding: 14px 20px; border-bottom: 1px solid #2a2a2a; background: #1a1a1a; display: flex; justify-content: space-between;">
+        <span style="font-family: monospace; font-size: 12px; color: #00ffa3;">// MODEM HUAWEI — HG8245 / EG8145 / B618 / HG532</span>
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #00ffa3; display: inline-block;"></span>
+      </div>
+      
+      <!-- Filas de Config -->
+      <div class="config-row">
+        <span style="font-family: monospace; font-size: 13px; color: #aaa;">DNS Primario</span>
+        <span style="font-family: monospace; font-size: 13px; color: #e8ff00; font-weight: 700;">1.1.1.1</span>
+        <span style="font-size: 12px; color: #666; text-align: right;">Cloudflare — el más rápido</span>
+      </div>
+      <div class="config-row">
+        <span style="font-family: monospace; font-size: 13px; color: #aaa;">DNS Secundario</span>
+        <span style="font-family: monospace; font-size: 13px; color: #e8ff00; font-weight: 700;">8.8.8.8</span>
+        <span style="font-size: 12px; color: #666; text-align: right;">Google DNS — respaldo</span>
+      </div>
+      <div class="config-row">
+        <span style="font-family: monospace; font-size: 13px; color: #aaa;">Banda 5GHz — Canal</span>
+        <span style="font-family: monospace; font-size: 13px; color: #e8ff00; font-weight: 700;">36 / 40 / 44</span>
+        <span style="font-size: 12px; color: #666; text-align: right;">UNII-1, menor interferencia</span>
+      </div>
+      <div class="config-row">
+        <span style="font-family: monospace; font-size: 13px; color: #aaa;">Banda 2.4GHz — Canal</span>
+        <span style="font-family: monospace; font-size: 13px; color: #e8ff00; font-weight: 700;">1, 6 o 11</span>
+        <span style="font-size: 12px; color: #666; text-align: right;">Únicos canales sin overlap</span>
+      </div>
+      <div class="config-row">
+        <span style="font-family: monospace; font-size: 13px; color: #aaa;">MTU</span>
+        <span style="font-family: monospace; font-size: 13px; color: #e8ff00; font-weight: 700;">1500</span>
+        <span style="font-size: 12px; color: #666; text-align: right;">Óptimo para streaming</span>
+      </div>
+      <div class="config-row">
+        <span style="font-family: monospace; font-size: 13px; color: #aaa;">QoS</span>
+        <span style="font-family: monospace; font-size: 13px; color: #e8ff00; font-weight: 700;">HABILITADO</span>
+        <span style="font-size: 12px; color: #666; text-align: right;">Prioridad a TV / streaming</span>
+      </div>
+      <div class="config-row">
+        <span style="font-family: monospace; font-size: 13px; color: #aaa;">Reinicio programado</span>
+        <span style="font-family: monospace; font-size: 13px; color: #e8ff00; font-weight: 700;">3:00 AM</span>
+        <span style="font-size: 12px; color: #666; text-align: right;">Limpia RAM y tablas ARP</span>
+      </div>
+
+      <div style="padding: 16px 20px; background: rgba(232,255,0,0.03); border-top: 1px solid rgba(232,255,0,0.15);">
+        <span style="font-family: monospace; font-size: 11px; color: #e8ff00;">// Acceso al panel: http://192.168.100.1 — usuario: admin / contraseña: admin (o ver sticker del modem)</span>
+      </div>
+    </div>
+
+    <!-- TAB: PASOS -->
+    <div id="tab-pasos" class="tab-content" style="background: transparent; border: none; padding-top: 16px;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        
+        <div class="step-row" style="--hover-color: #ff3b3b;">
+          <div style="font-weight: 900; font-size: 28px; color: #2a2a2a; line-height: 1;">01</div>
+          <div>
+            <div style="font-weight: 700; font-size: 15px; color: #f0f0f0; margin-bottom: 6px;">Medí la velocidad real</div>
+            <div style="font-size: 13px; color: #aaa; line-height: 1.6;">Entrá a fast.com conectado por cable directo al modem. Ese número es tu techo real. Si hay diferencia grande con lo contratado, hay problema en la línea.</div>
+          </div>
+          <div style="padding: 4px 10px; border: 1px solid #ff3b3b; color: #ff3b3b; font-family: monospace; font-size: 10px; white-space: nowrap;">CRÍTICO</div>
+        </div>
+
+        <div class="step-row" style="--hover-color: #e8ff00;">
+          <div style="font-weight: 900; font-size: 28px; color: #2a2a2a; line-height: 1;">02</div>
+          <div>
+            <div style="font-weight: 700; font-size: 15px; color: #f0f0f0; margin-bottom: 6px;">Accedé al panel Huawei (192.168.100.1)</div>
+            <div style="font-size: 13px; color: #aaa; line-height: 1.6;">Usuario: admin / admin (o el del sticker). Desde ahí controlás todo. Si nunca entraste, es hora de conocer tu red.</div>
+          </div>
+          <div style="padding: 4px 10px; border: 1px solid #e8ff00; color: #e8ff00; font-family: monospace; font-size: 10px; white-space: nowrap;">PASO BASE</div>
+        </div>
+
+        <div class="step-row" style="--hover-color: #e8ff00;">
+          <div style="font-weight: 900; font-size: 28px; color: #2a2a2a; line-height: 1;">03</div>
+          <div>
+            <div style="font-weight: 700; font-size: 15px; color: #f0f0f0; margin-bottom: 6px;">Cambiá los DNS a 1.1.1.1 / 8.8.8.8</div>
+            <div style="font-size: 13px; color: #aaa; line-height: 1.6;">Los DNS del proveedor suelen tardar 200-400ms. Con Cloudflare bajás eso a 10-20ms. Cambio gratuito, impacto inmediato.</div>
+          </div>
+          <div style="padding: 4px 10px; border: 1px solid #e8ff00; color: #e8ff00; font-family: monospace; font-size: 10px; white-space: nowrap;">ALTO IMPACTO</div>
+        </div>
+
+        <div class="step-row" style="--hover-color: #e8ff00;">
+          <div style="font-weight: 900; font-size: 28px; color: #2a2a2a; line-height: 1;">04</div>
+          <div>
+            <div style="font-weight: 700; font-size: 15px; color: #f0f0f0; margin-bottom: 6px;">Creá una red 5GHz solo para streaming</div>
+            <div style="font-size: 13px; color: #aaa; line-height: 1.6;">En el panel Huawei, creá una SSID secundaria en 5GHz. Llamala "Streaming-5G" y conectá solo tu Smart TV o decodificador.</div>
+          </div>
+          <div style="padding: 4px 10px; border: 1px solid #e8ff00; color: #e8ff00; font-family: monospace; font-size: 10px; white-space: nowrap;">ALTO IMPACTO</div>
+        </div>
+
+        <div class="step-row" style="--hover-color: #00ffa3;">
+          <div style="font-weight: 900; font-size: 28px; color: #2a2a2a; line-height: 1;">05</div>
+          <div>
+            <div style="font-weight: 700; font-size: 15px; color: #f0f0f0; margin-bottom: 6px;">Habilitá QoS con prioridad al TV</div>
+            <div style="font-size: 13px; color: #aaa; line-height: 1.6;">En Configuración Avanzada › QoS, asigná máxima prioridad a la MAC de tu televisor. Cuando compite el ancho de banda, tu partido siempre gana.</div>
+          </div>
+          <div style="padding: 4px 10px; border: 1px solid #00ffa3; color: #00ffa3; font-family: monospace; font-size: 10px; white-space: nowrap;">ESENCIAL</div>
+        </div>
+
+        <div class="step-row" style="--hover-color: #00ffa3;">
+          <div style="font-weight: 900; font-size: 28px; color: #2a2a2a; line-height: 1;">06</div>
+          <div>
+            <div style="font-weight: 700; font-size: 15px; color: #f0f0f0; margin-bottom: 6px;">Cable UTP Cat6 directo al Smart TV</div>
+            <div style="font-size: 13px; color: #aaa; line-height: 1.6;">La WiFi más potente no supera un buen cable. 10 metros de Cat6 eliminan el 90% de los cortes para señales codificadas.</div>
+          </div>
+          <div style="padding: 4px 10px; border: 1px solid #00ffa3; color: #00ffa3; font-family: monospace; font-size: 10px; white-space: nowrap;">RECOMENDADO</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div style="font-weight: 900; font-size: 20px; color: #444; letter-spacing: 2px;">NET<span style="color: #e8ff00">PRO</span></div>
+      <div style="font-family: monospace; font-size: 11px; color: #444; text-align: right; line-height: 1.8;">50+ años · Posgrado + Magistrado · Huawei · IPTV · Streaming</div>
+    </footer>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    const SYSTEM_PROMPT = `Sos un especialista en redes de comunicaciones con más de 50 años de experiencia profesional. Tenés posgrado y magistrado en telecomunicaciones. Sos experto en redes hogareñas y empresariales, especialmente en:
 - Módems Huawei (HG8245, EG8145, B618, HG532, y todos los modelos hogareños)
 - Optimización para streaming, IPTV, fútbol en vivo, señales codificadas (DirecTV, TyC Sports, ESPN, etc.)
 - Configuración de QoS, DNS, canales WiFi, separación de redes, VLANs básicas
@@ -9,217 +317,123 @@ const SYSTEM_PROMPT = `Sos un especialista en redes de comunicaciones con más d
 
 Respondés de forma directa, técnica pero comprensible. Das consejos concretos y pasos accionables. Usás términos técnicos pero siempre los explicás brevemente. Respondés en español rioplatense. Sos confiado y claro. Máximo 4 párrafos por respuesta. Nunca decís "no puedo ayudarte" — siempre das una solución o un camino concreto.`;
 
-const QUICK = [
-  "¿Por qué se tilda mi Huawei?",
-  "Ver fútbol sin cortes",
-  "Mejorar WiFi para streaming",
-  "Configurar DNS rápido",
-  "¿Necesito otro router?",
-  "Cable directo vs WiFi",
-];
+    let messages =[
+      { role: "assistant", text: "Buenas. Soy tu especialista en redes con más de 50 años en el campo. Contame qué problema tenés: lentitud, cortes, buffering, señal débil... y te doy el diagnóstico y la solución concreta. No hay problema de red sin solución técnica." }
+    ];
+    let loading = false;
 
-const CONFIG_ROWS = [
-  { key: "DNS Primario", val: "1.1.1.1", note: "Cloudflare — el más rápido" },
-  { key: "DNS Secundario", val: "8.8.8.8", note: "Google DNS — respaldo" },
-  { key: "Banda 5GHz — Canal", val: "36 / 40 / 44", note: "UNII-1, menor interferencia" },
-  { key: "Banda 2.4GHz — Canal", val: "1, 6 o 11", note: "Únicos canales sin overlap" },
-  { key: "MTU", val: "1500", note: "Óptimo para streaming" },
-  { key: "QoS", val: "HABILITADO", note: "Prioridad a TV / streaming" },
-  { key: "Reinicio programado", val: "3:00 AM", note: "Limpia RAM y tablas ARP" },
-];
+    // Inicializar clave si está guardada
+    window.onload = () => {
+      const savedKey = sessionStorage.getItem('netpro_api_key');
+      if(savedKey) document.getElementById('api-key').value = savedKey;
+      renderMessages();
+    };
 
-const STEPS = [
-  { n:"01", title:"Medí la velocidad real", desc:"Entrá a fast.com conectado por cable directo al modem. Ese número es tu techo real. Si hay diferencia grande con lo contratado, hay problema en la línea.", badge:"CRÍTICO", color:"#ff3b3b" },
-  { n:"02", title:"Accedé al panel Huawei (192.168.100.1)", desc:'Usuario: admin / admin (o el del sticker). Desde ahí controlás todo. Si nunca entraste, es hora de conocer tu red.', badge:"PASO BASE", color:"#e8ff00" },
-  { n:"03", title:"Cambiá los DNS a 1.1.1.1 / 8.8.8.8", desc:"Los DNS del proveedor suelen tardar 200-400ms. Con Cloudflare bajás eso a 10-20ms. Cambio gratuito, impacto inmediato.", badge:"ALTO IMPACTO", color:"#e8ff00" },
-  { n:"04", title:"Creá una red 5GHz solo para streaming", desc:'En el panel Huawei, creá una SSID secundaria en 5GHz. Llamala "Streaming-5G" y conectá solo tu Smart TV o decodificador.', badge:"ALTO IMPACTO", color:"#e8ff00" },
-  { n:"05", title:"Habilitá QoS con prioridad al TV", desc:"En Configuración Avanzada › QoS, asigná máxima prioridad a la MAC de tu televisor. Cuando compite el ancho de banda, tu partido siempre gana.", badge:"ESENCIAL", color:"#00ffa3" },
-  { n:"06", title:"Cable UTP Cat6 directo al Smart TV", desc:"La WiFi más potente no supera un buen cable. 10 metros de Cat6 eliminan el 90% de los cortes para señales codificadas.", badge:"RECOMENDADO", color:"#00ffa3" },
-];
-
-export default function App() {
-  const [messages, setMessages] = useState([
-    { role: "assistant", text: "Buenas. Soy tu especialista en redes con más de 50 años en el campo. Contame qué problema tenés: lentitud, cortes, buffering, señal débil... y te doy el diagnóstico y la solución concreta. No hay problema de red sin solución técnica." }
-  ]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("chat");
-  const bottomRef = useRef(null);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
-
-  async function send() {
-    const text = input.trim();
-    if (!text || loading) return;
-    const newMsgs = [...messages, { role: "user", text }];
-    setMessages(newMsgs);
-    setInput("");
-    setLoading(true);
-    try {
-      const apiMessages = newMsgs.map(m => ({ role: m.role === "assistant" ? "assistant" : "user", content: m.text }));
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system: SYSTEM_PROMPT, messages: apiMessages })
-      });
-      const data = await res.json();
-      const reply = data.content?.find(b => b.type === "text")?.text || "Error al procesar. Intentá de nuevo.";
-      setMessages(prev => [...prev, { role: "assistant", text: reply }]);
-    } catch {
-      setMessages(prev => [...prev, { role: "assistant", text: "Error de conexión. Revisá tu red e intentá de nuevo." }]);
+    function saveKey() {
+      sessionStorage.setItem('netpro_api_key', document.getElementById('api-key').value);
     }
-    setLoading(false);
-  }
 
-  return (
-    <div style={{ background: "#0a0a0a", minHeight: "100vh", color: "#d0d0d0", fontFamily: "'Segoe UI', system-ui, sans-serif", position: "relative" }}>
-      {/* BG */}
-      <div style={{ position: "fixed", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px)", backgroundSize: "60px 60px", pointerEvents: "none" }} />
-      <div style={{ position: "fixed", inset: 0, background: "radial-gradient(ellipse 70% 50% at 15% 20%, rgba(232,255,0,0.04) 0%, transparent 60%)", pointerEvents: "none" }} />
+    // Funcionalidad de Pestañas
+    function setTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+        btn.classList.toggle('active', 
+          (idx === 0 && tabId === 'chat') || 
+          (idx === 1 && tabId === 'config') || 
+          (idx === 2 && tabId === 'pasos')
+        );
+      });
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      document.getElementById('tab-' + tabId).classList.add('active');
+    }
 
-      <div style={{ position: "relative", maxWidth: 960, margin: "0 auto", padding: "0 20px" }}>
+    function setInput(text) {
+      document.getElementById('chat-input').value = text;
+      document.getElementById('chat-input').focus();
+    }
 
-        {/* HEADER */}
-        <header style={{ borderBottom: "1px solid #2a2a2a", padding: "28px 0 24px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 16 }}>
-            <div>
-              <div style={{ fontFamily: "monospace", fontSize: 11, color: "#e8ff00", letterSpacing: 4, textTransform: "uppercase", marginBottom: 4 }}>// especialista certificado en redes</div>
-              <div style={{ fontSize: "clamp(40px,8vw,64px)", fontWeight: 900, lineHeight: 1, color: "#f0f0f0", letterSpacing: 2 }}>
-                NET<span style={{ color: "#e8ff00" }}>PRO</span>
-              </div>
-              <div style={{ fontSize: 13, color: "#aaa", marginTop: 4 }}>Consultoría Avanzada · Redes Hogareñas & Empresariales</div>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end" }}>
-              {["50+ años de experiencia", "Posgrado + Magistrado Telecomunicaciones", "Experto Huawei / Streaming / IPTV"].map(c => (
-                <div key={c} style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 12px", border: "1px solid #2a2a2a", background: "#1a1a1a", borderRadius: 2, fontFamily: "monospace", fontSize: 11, color: "#aaa", whiteSpace: "nowrap" }}>
-                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#00ffa3", display: "inline-block", animation: "none" }} />
-                  {c}
-                </div>
-              ))}
-            </div>
-          </div>
-        </header>
+    function renderMessages() {
+      const container = document.getElementById('chat-messages');
+      container.innerHTML = '';
+      
+      messages.forEach(m => {
+        const div = document.createElement('div');
+        div.className = `bubble ${m.role}`;
+        div.textContent = m.text;
+        container.appendChild(div);
+      });
 
-        {/* MÉTRICAS */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "#2a2a2a", border: "1px solid #2a2a2a", margin: "28px 0" }}>
-          {[["80%","fallas resueltas con config"],["4K","streaming estable 25 Mbps"],["<20ms","latencia con QoS activo"],["Wi-Fi 6","estándar recomendado"]].map(([n,l]) => (
-            <div key={n} style={{ background: "#141414", padding: "20px 16px" }}>
-              <div style={{ fontSize: 36, fontWeight: 900, color: "#e8ff00", lineHeight: 1 }}>{n}</div>
-              <div style={{ fontFamily: "monospace", fontSize: 11, color: "#666", marginTop: 4, lineHeight: 1.4 }}>{l}</div>
-            </div>
-          ))}
-        </div>
+      if (loading) {
+        const loader = document.createElement('div');
+        loader.className = 'loading-dots';
+        loader.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+        container.appendChild(loader);
+      }
 
-        {/* TABS */}
-        <div style={{ display: "flex", gap: 0, borderBottom: "1px solid #2a2a2a", marginBottom: 0 }}>
-          {[["chat","💬 Consultá al Especialista"],["config","⚙️ Config Huawei"],["pasos","📋 Protocolo de Optimización"]].map(([id, label]) => (
-            <button key={id} onClick={() => setActiveTab(id)} style={{ padding: "12px 20px", background: activeTab === id ? "#1a1a1a" : "transparent", border: "none", borderBottom: activeTab === id ? "2px solid #e8ff00" : "2px solid transparent", color: activeTab === id ? "#e8ff00" : "#666", cursor: "pointer", fontFamily: "monospace", fontSize: 12, letterSpacing: 1, transition: "all 0.2s" }}>
-              {label}
-            </button>
-          ))}
-        </div>
+      // Scroll hacia abajo
+      container.scrollTop = container.scrollHeight;
+    }
 
-        {/* TAB: CHAT */}
-        {activeTab === "chat" && (
-          <div style={{ border: "1px solid #2a2a2a", borderTop: "none", background: "#0d0d0d", marginBottom: 40 }}>
-            {/* Quick chips */}
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", padding: "12px 16px", borderBottom: "1px solid #1e1e1e" }}>
-              {QUICK.map(q => (
-                <button key={q} onClick={() => setInput(q)} style={{ padding: "5px 12px", border: "1px solid #2a2a2a", background: "#141414", color: "#aaa", fontSize: 12, fontFamily: "monospace", cursor: "pointer", borderRadius: 2, transition: "all 0.2s" }}
-                  onMouseEnter={e => { e.target.style.borderColor = "#00ffa3"; e.target.style.color = "#00ffa3"; }}
-                  onMouseLeave={e => { e.target.style.borderColor = "#2a2a2a"; e.target.style.color = "#aaa"; }}>
-                  {q}
-                </button>
-              ))}
-            </div>
+    async function send() {
+      if (loading) return;
+      
+      const inputEl = document.getElementById('chat-input');
+      const text = inputEl.value.trim();
+      if (!text) return;
 
-            {/* Messages */}
-            <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 12, maxHeight: 420, overflowY: "auto" }}>
-              {messages.map((m, i) => (
-                <div key={i} style={{ maxWidth: "82%", alignSelf: m.role === "user" ? "flex-end" : "flex-start", padding: "12px 16px", background: m.role === "user" ? "rgba(0,255,163,0.07)" : "#1a1a1a", border: m.role === "user" ? "1px solid rgba(0,255,163,0.2)" : "1px solid #2a2a2a", borderLeft: m.role === "assistant" ? "3px solid #e8ff00" : undefined, fontSize: 14, lineHeight: 1.65, color: m.role === "user" ? "#f0f0f0" : "#d0d0d0", textAlign: m.role === "user" ? "right" : "left", whiteSpace: "pre-wrap" }}>
-                  {m.text}
-                </div>
-              ))}
-              {loading && (
-                <div style={{ display: "flex", gap: 5, padding: "12px 16px", background: "#1a1a1a", border: "1px solid #2a2a2a", borderLeft: "3px solid #e8ff00", width: "fit-content", alignItems: "center" }}>
-                  {[0,0.2,0.4].map((d,i) => (
-                    <div key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: "#e8ff00", animation: `bounce 1.2s ${d}s infinite` }} />
-                  ))}
-                </div>
-              )}
-              <div ref={bottomRef} />
-            </div>
+      const apiKey = document.getElementById('api-key').value.trim();
+      if(!apiKey) {
+        alert("Por favor, ingresá tu API Key de Anthropic en la barra superior para usar el chat.");
+        return;
+      }
 
-            {/* Input */}
-            <div style={{ display: "flex", gap: 8, padding: "12px 16px", borderTop: "1px solid #1e1e1e" }}>
-              <input
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && send()}
-                placeholder="Describí tu problema de red..."
-                disabled={loading}
-                style={{ flex: 1, background: "#141414", border: "1px solid #2a2a2a", color: "#d0d0d0", padding: "10px 14px", fontFamily: "inherit", fontSize: 14, outline: "none", borderRadius: 2 }}
-              />
-              <button onClick={send} disabled={loading || !input.trim()} style={{ background: loading ? "#333" : "#e8ff00", color: "#0a0a0a", border: "none", padding: "10px 24px", fontWeight: 900, fontSize: 14, letterSpacing: 1, cursor: loading ? "not-allowed" : "pointer", borderRadius: 2, transition: "all 0.2s" }}>
-                {loading ? "..." : "ENVIAR"}
-              </button>
-            </div>
-          </div>
-        )}
+      // Añadir mensaje del usuario
+      messages.push({ role: "user", text });
+      inputEl.value = "";
+      loading = true;
+      renderMessages();
+      document.getElementById('btn-send').disabled = true;
+      document.getElementById('btn-send').textContent = "...";
 
-        {/* TAB: CONFIG HUAWEI */}
-        {activeTab === "config" && (
-          <div style={{ border: "1px solid #2a2a2a", borderTop: "none", background: "#141414", marginBottom: 40 }}>
-            <div style={{ padding: "14px 20px", borderBottom: "1px solid #2a2a2a", background: "#1a1a1a", display: "flex", justifyContent: "space-between" }}>
-              <span style={{ fontFamily: "monospace", fontSize: 12, color: "#00ffa3" }}>// MODEM HUAWEI — HG8245 / EG8145 / B618 / HG532</span>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#00ffa3", display: "inline-block" }} />
-            </div>
-            {CONFIG_ROWS.map(r => (
-              <div key={r.key} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1.5fr", gap: 16, padding: "14px 20px", borderBottom: "1px solid #1e1e1e", alignItems: "center" }}>
-                <span style={{ fontFamily: "monospace", fontSize: 13, color: "#aaa" }}>{r.key}</span>
-                <span style={{ fontFamily: "monospace", fontSize: 13, color: "#e8ff00", fontWeight: 700 }}>{r.val}</span>
-                <span style={{ fontSize: 12, color: "#666", textAlign: "right" }}>{r.note}</span>
-              </div>
-            ))}
-            <div style={{ padding: "16px 20px", background: "rgba(232,255,0,0.03)", borderTop: "1px solid rgba(232,255,0,0.15)" }}>
-              <span style={{ fontFamily: "monospace", fontSize: 11, color: "#e8ff00" }}>// Acceso al panel: http://192.168.100.1 — usuario: admin / contraseña: admin (o ver sticker del modem)</span>
-            </div>
-          </div>
-        )}
+      try {
+        const apiMessages = messages.map(m => ({ 
+          role: m.role === "assistant" ? "assistant" : "user", 
+          content: m.text 
+        }));
 
-        {/* TAB: PASOS */}
-        {activeTab === "pasos" && (
-          <div style={{ borderTop: "none", marginBottom: 40, display: "flex", flexDirection: "column", gap: 8, paddingTop: 16 }}>
-            {STEPS.map(s => (
-              <div key={s.n} style={{ display: "grid", gridTemplateColumns: "48px 1fr auto", gap: 16, padding: "18px 20px", border: "1px solid #2a2a2a", background: "#141414", alignItems: "start", transition: "all 0.2s", cursor: "default" }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = s.color; e.currentTarget.style.transform = "translateX(4px)"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "#2a2a2a"; e.currentTarget.style.transform = "translateX(0)"; }}>
-                <div style={{ fontWeight: 900, fontSize: 28, color: "#2a2a2a", lineHeight: 1, transition: "color 0.2s" }}>{s.n}</div>
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: 15, color: "#f0f0f0", marginBottom: 6 }}>{s.title}</div>
-                  <div style={{ fontSize: 13, color: "#aaa", lineHeight: 1.6 }}>{s.desc}</div>
-                </div>
-                <div style={{ padding: "4px 10px", border: `1px solid ${s.color}`, color: s.color, fontFamily: "monospace", fontSize: 10, whiteSpace: "nowrap", alignSelf: "flex-start" }}>{s.badge}</div>
-              </div>
-            ))}
-          </div>
-        )}
+        const res = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            "x-api-key": apiKey,
+            "anthropic-version": "2023-06-01",
+            "anthropic-dangerous-direct-browser-access": "true"
+          },
+          body: JSON.stringify({ 
+            model: "claude-3-5-sonnet-20241022", /* Modelo estable */
+            max_tokens: 1000, 
+            system: SYSTEM_PROMPT, 
+            messages: apiMessages 
+          })
+        });
 
-        {/* FOOTER */}
-        <footer style={{ borderTop: "1px solid #1e1e1e", padding: "24px 0", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-          <div style={{ fontWeight: 900, fontSize: 20, color: "#444", letterSpacing: 2 }}>NET<span style={{ color: "#e8ff00" }}>PRO</span></div>
-          <div style={{ fontFamily: "monospace", fontSize: 11, color: "#444", textAlign: "right", lineHeight: 1.8 }}>50+ años · Posgrado + Magistrado · Huawei · IPTV · Streaming</div>
-        </footer>
-      </div>
+        const data = await res.json();
+        
+        if(!res.ok) throw new Error(data?.error?.message || "Error al conectar con la API.");
 
-      <style>{`
-        @keyframes bounce {
-          0%,60%,100% { opacity:0.3; transform:translateY(0); }
-          30% { opacity:1; transform:translateY(-4px); }
-        }
-      `}</style>
-    </div>
-  );
-}
+        const reply = data.content?.find(b => b.type === "text")?.text || "Error al procesar la respuesta.";
+        messages.push({ role: "assistant", text: reply });
+
+      } catch(e) {
+        messages.push({ role: "assistant", text: "Error de conexión: " + e.message });
+      }
+
+      loading = false;
+      document.getElementById('btn-send').disabled = false;
+      document.getElementById('btn-send').textContent = "ENVIAR";
+      renderMessages();
+    }
+  </script>
+</body>
+</html>
