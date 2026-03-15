@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NetPro Consultor — Especialista en Redes Hogareñas y Empresariales</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --negro: #0a0a0a;
+    --carbón: #141414;
+    --panel: #1a1a1a;
+    --borde: #2a2a2a;
+    --acento: #e8ff00;
+    --acento2: #00ffa3;
+    --rojo: #ff3b3b;
+    --gris: #666;
+    --gris-claro: #aaa;
+    --blanco: #f0f0f0;
+    --texto: #d0d0d0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--negro);
+    color: var(--texto);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRID DE RUIDO DE FONDO */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(232,255,0,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 90% 80%, rgba(0,255,163,0.03) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* LÍNEAS DE GRID TÉCNICO */
+  .grid-lines {
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* ====== HEADER ====== */
+  header {
+    border-bottom: 1px solid var(--borde);
+    padding: 32px 0 28px;
+    position: relative;
+  }
+
+  .header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .brand-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--acento);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  .brand-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(44px, 8vw, 72px);
+    letter-spacing: 2px;
+    line-height: 1;
+    color: var(--blanco);
+  }
+
+  .brand-name span { color: var(--acento); }
+
+  .brand-sub {
+    font-size: 13px;
+    color: var(--gris-claro);
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  .credentials {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .cred-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border: 1px solid var(--borde);
+    background: var(--panel);
+    border-radius: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--gris-claro);
+    white-space: nowrap;
+  }
+
+  .cred-badge .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--acento2);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* ====== HERO DIAGNÓSTICO ====== */
+  .hero {
+    padding: 52px 0 40px;
+    border-bottom: 1px solid var(--borde);
+  }
+
+  .hero-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--rojo);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero-label::before {
+    content: '⬤';
+    font-size: 8px;
+    animation: pulse 1.5s infinite;
+    color: var(--rojo);
+  }
+
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 5vw, 46px);
+    line-height: 1.2;
+    color: var(--blanco);
+    max-width: 750px;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--acento);
+  }
+
+  .hero-desc {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--gris-claro);
+    max-width: 680px;
+    margin-bottom: 32px;
+  }
+
+  /* ====== MÉTRICAS RÁPIDAS ====== */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--borde);
+    border: 1px solid var(--borde);
+    margin-bottom: 0;
+  }
+
+  .metric-cell {
+    background: var(--carbón);
+    padding: 24px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s;
+  }
+
+  .metric-cell:hover { background: var(--panel); }
+
+  .metric-cell::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--acento);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+
+  .metric-cell:hover::after { transform: scaleX(1); }
+
+  .metric-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: var(--acento);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .metric-label {
+    font-size: 12px;
+    color: var(--gris);
+    line-height: 1.4;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ====== SECCIÓN PRINCIPAL: DIAGNÓSTICO ====== */
+  .section { padding: 48px 0; border-bottom: 1px solid var(--borde); }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .section-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--gris);
+    letter-spacing: 2px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 1px;
+    color: var(--blanco);
+  }
+
+  .section-title span { color: var(--acento2); }
+
+  /* ====== PROBLEMA / CAUSA / SOLUCIÓN ====== */
+  .diagnostico-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 640px) { .diagnostico-grid { grid-template-columns: 1fr; } }
+
+  .diag-card {
+    border: 1px solid var(--borde);
+    padding: 24px;
+    background: var(--carbón);
+    position: relative;
+  }
+
+  .diag-card.highlight {
+    border-color: var(--acento);
+    background: rgba(232,255,0,0.03);
+  }
+
+  .diag-card.danger {
+    border-color: var(--rojo);
+    background: rgba(255,59,59,0.03);
+  }
+
+  .card-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--acento);
+    margin-bottom: 12px;
+  }
+
+  .diag-card.danger .card-title { color: var(--rojo); }
+
+  .card-body {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--texto);
+  }
+
+  .card-body ul { list-style: none; padding: 0; }
+
+  .card-body ul li {
+    padding: 5px 0;
+    padding-left: 16px;
+    position: relative;
+    color: var(--gris-claro);
+    font-size: 13.5px;
+  }
+
+  .card-body ul li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--acento2);
+    font-weight: bold;
+  }
+
+  /* ====== PROTOCOLO DE OPTIMIZACIÓN ====== */
+  .protocol-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .protocol-step {
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    align-items: start;
+    gap: 16px;
+    padding: 20px;
+    border: 1px solid var(--borde);
+    background: var(--carbón);
+    transition: all 0.2s;
+    cursor: default;
+  }
+
+  .protocol-step:hover {
+    border-color: var(--acento2);
+    background: rgba(0,255,163,0.03);
+    transform: translateX(4px);
+  }
+
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--borde);
+    line-height: 1;
+    transition: color 0.2s;
+  }
+
+  .protocol-step:hover .step-num { color: var(--acento2); }
+
+  .step-content h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--blanco);
+    margin-bottom: 6px;
+  }
+
+  .step-content p {
+    font-size: 13px;
+    color: var(--gris-claro);
+    line-height: 1.6;
+  }
+
+  .step-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    background: var(--panel);
+    border: 1px solid var(--borde);
+    color: var(--gris);
+    white-space: nowrap;
+    align-self: flex-start;
+  }
+
+  .step-badge.critico { border-color: var(--rojo); color: var(--rojo); }
+  .step-badge.alto { border-color: var(--acento); color: var(--acento); }
+  .step-badge.medio { border-color: var(--acento2); color: var(--acento2); }
+
+  /* ====== CONFIGURACIÓN TÉCNICA MODEM HUAWEI ====== */
+  .config-block {
+    background: var(--carbón);
+    border: 1px solid var(--borde);
+    overflow: hidden;
+  }
+
+  .config-header {
+    padding: 14px 20px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--borde);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .config-header span {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--acento2);
+  }
+
+  .config-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--acento2); }
+
+  .config-body { padding: 20px; }
+
+  .config-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    gap: 16px;
+  }
+
+  .config-row:last-child { border-bottom: none; }
+
+  .config-key {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--gris-claro);
+    flex: 1;
+  }
+
+  .config-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--acento);
+    text-align: right;
+    flex: 1;
+  }
+
+  .config-note {
+    font-size: 11px;
+    color: var(--gris);
+    text-align: right;
+    flex: 1.5;
+  }
+
+  /* ====== TABLA COMPARATIVA STREAMING ====== */
+  .table-wrap { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead tr {
+    background: var(--panel);
+    border-bottom: 2px solid var(--acento);
+  }
+
+  th {
+    padding: 12px 16px;
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--acento);
+    font-weight: 600;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--borde);
+    color: var(--gris-claro);
+    vertical-align: middle;
+  }
+
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    border-radius: 2px;
+  }
+
+  .tag-verde { background: rgba(0,255,163,0.1); color: var(--acento2); border: 1px solid rgba(0,255,163,0.3); }
+  .tag-rojo { background: rgba(255,59,59,0.1); color: var(--rojo); border: 1px solid rgba(255,59,59,0.3); }
+  .tag-amarillo { background: rgba(232,255,0,0.1); color: var(--acento); border: 1px solid rgba(232,255,0,0.3); }
+
+  /* ====== PANEL DE CHAT IA ====== */
+  .ai-panel {
+    border: 1px solid var(--acento);
+    background: rgba(232,255,0,0.02);
+    overflow: hidden;
+  }
+
+  .ai-panel-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(232,255,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(232,255,0,0.05);
+  }
+
+  .ai-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--acento);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+
+  .ai-name { font-weight: 800; font-size: 14px; color: var(--blanco); }
+  .ai-status { font-size: 11px; color: var(--acento); font-family: 'IBM Plex Mono', monospace; }
+
+  .chat-messages {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-track { background: var(--carbón); }
+  .chat-messages::-webkit-scrollbar-thumb { background: var(--borde); }
+
+  .msg {
+    max-width: 80%;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    border-radius: 2px;
+  }
+
+  .msg-bot {
+    background: var(--panel);
+    border: 1px solid var(--borde);
+    border-left: 3px solid var(--acento);
+    color: var(--texto);
+    align-self: flex-start;
+  }
+
+  .msg-user {
+    background: rgba(0,255,163,0.08);
+    border: 1px solid rgba(0,255,163,0.2);
+    color: var(--blanco);
+    align-self: flex-end;
+    text-align: right;
+  }
+
+  .chat-input-area {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(232,255,0,0.15);
+    display: flex;
+    gap: 10px;
+  }
+
+  .chat-input {
+    flex: 1;
+    background: var(--carbón);
+    border: 1px solid var(--borde);
+    color: var(--texto);
+    padding: 10px 14px;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .chat-input:focus { border-color: var(--acento); }
+  .chat-input::placeholder { color: var(--gris); }
+
+  .chat-btn {
+    background: var(--acento);
+    color: var(--negro);
+    border: none;
+    padding: 10px 20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .chat-btn:hover { background: var(--blanco); transform: scale(1.02); }
+  .chat-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .typing-indicator {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+    background: var(--panel);
+    border: 1px solid var(--borde);
+    border-left: 3px solid var(--acento);
+    width: fit-content;
+    align-self: flex-start;
+  }
+
+  .typing-indicator.visible { display: flex; }
+
+  /* ====== MODAL API KEY ====== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.hidden { display: none; }
+
+  .modal-box {
+    background: #141414;
+    border: 1px solid #e8ff00;
+    max-width: 480px;
+    width: 100%;
+    overflow: hidden;
+    animation: fadeUp 0.3s ease;
+  }
+
+  .modal-header {
+    background: rgba(232,255,0,0.06);
+    border-bottom: 1px solid rgba(232,255,0,0.2);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .modal-icon {
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: #f0f0f0;
+  }
+
+  .modal-subtitle {
+    font-size: 11px;
+    color: #e8ff00;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  .modal-body { padding: 24px; }
+
+  .modal-desc {
+    font-size: 13.5px;
+    color: #aaa;
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .modal-desc a {
+    color: #e8ff00;
+    text-decoration: none;
+  }
+
+  .key-input-wrap {
+    position: relative;
+    margin-bottom: 10px;
+  }
+
+  .key-input {
+    width: 100%;
+    background: #0a0a0a;
+    border: 1px solid #2a2a2a;
+    color: #f0f0f0;
+    padding: 12px 44px 12px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+  }
+
+  .key-input:focus { border-color: #e8ff00; }
+  .key-input::placeholder { color: #444; }
+
+  .toggle-eye {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    transition: color 0.2s;
+  }
+
+  .toggle-eye:hover { color: #e8ff00; }
+
+  .key-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #444;
+    margin-bottom: 20px;
+  }
+
+  .modal-warning {
+    background: rgba(255,59,59,0.06);
+    border: 1px solid rgba(255,59,59,0.2);
+    border-left: 3px solid #ff3b3b;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #aaa;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .modal-warning strong { color: #ff3b3b; }
+
+  .modal-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .btn-cancelar {
+    background: transparent;
+    border: 1px solid #2a2a2a;
+    color: #666;
+    padding: 10px 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-cancelar:hover { border-color: #666; color: #aaa; }
+
+  .btn-confirmar {
+    background: #e8ff00;
+    border: none;
+    color: #0a0a0a;
+    padding: 10px 28px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-confirmar:hover { background: #f0f0f0; transform: scale(1.02); }
+  .btn-confirmar:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .key-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid #2a2a2a;
+    background: #1a1a1a;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 0;
+  }
+
+  .key-status:hover { border-color: #e8ff00; color: #e8ff00; }
+  .key-status .dot-key { width: 6px; height: 6px; border-radius: 50%; background: #ff3b3b; }
+  .key-status.activa .dot-key { background: #00ffa3; }
+  .key-status.activa { color: #00ffa3; border-color: #1e3a2e; }
+
+  .typing-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--acento);
+    animation: typing 1.2s infinite;
+  }
+
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typing {
+    0%,60%,100% { opacity: 0.3; transform: translateY(0); }
+    30% { opacity: 1; transform: translateY(-4px); }
+  }
+
+  /* ====== CHIPS DE CONSULTA RÁPIDA ====== */
+  .quick-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 12px 20px;
+    border-top: 1px solid var(--borde);
+    border-bottom: 1px solid rgba(232,255,0,0.15);
+  }
+
+  .chip {
+    padding: 6px 14px;
+    border: 1px solid var(--borde);
+    background: var(--carbón);
+    color: var(--gris-claro);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'IBM Plex Mono', monospace;
+    border-radius: 2px;
+  }
+
+  .chip:hover {
+    border-color: var(--acento2);
+    color: var(--acento2);
+    background: rgba(0,255,163,0.05);
+  }
+
+  /* ====== FOOTER ====== */
+  footer {
+    padding: 32px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .footer-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--gris);
+    letter-spacing: 2px;
+  }
+
+  .footer-brand span { color: var(--acento); }
+
+  .footer-info {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--gris);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  /* Animación de entrada */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in { animation: fadeUp 0.5s ease forwards; }
+  .delay-1 { animation-delay: 0.1s; opacity: 0; }
+  .delay-2 { animation-delay: 0.2s; opacity: 0; }
+  .delay-3 { animation-delay: 0.3s; opacity: 0; }
+  .delay-4 { animation-delay: 0.4s; opacity: 0; }
+</style>
+</head>
+<body>
+<div class="grid-lines"></div>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="fade-in">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-tag">// especialista certificado en redes</div>
+        <div class="brand-name">NET<span>PRO</span></div>
+        <div class="brand-sub">Consultoría Avanzada · Redes Hogareñas & Empresariales</div>
+      </div>
+      <div class="credentials">
+        <div class="cred-badge"><span class="dot"></span> 50+ años de experiencia profesional</div>
+        <div class="cred-badge"><span class="dot"></span> Posgrado + Magistrado en Telecomunicaciones</div>
+        <div class="cred-badge"><span class="dot"></span> Especialista Modem Huawei / Streaming / IPTV</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero fade-in delay-1">
+    <div class="hero-label">diagnóstico activo</div>
+    <h1>Tu red tiene <em>problemas</em>.<br>Vamos a resolverlos <em>de raíz</em>.</h1>
+    <p class="hero-desc">
+      Años de cortes, buffering y partidos que se cuelgan tienen causas técnicas concretas. 
+      Como especialista en redes con más de 50 años de trayectoria, te voy a guiar paso a paso 
+      para armar un entorno doméstico de alta performance, optimizado para streaming, fútbol en vivo, 
+      IPTV y señales codificadas — sin gastar fortunas.
+    </p>
+
+    <div class="metrics">
+      <div class="metric-cell">
+        <div class="metric-num">80%</div>
+        <div class="metric-label">de fallas resueltas<br>con configuración</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-num">4K</div>
+        <div class="metric-label">streaming estable<br>con 25 Mbps reales</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-num">&lt;20ms</div>
+        <div class="metric-label">latencia objetivo<br>con QoS bien configurado</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-num">Wi-Fi 6</div>
+        <div class="metric-label">estándar recomendado<br>para entorno hogareño</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIAGNÓSTICO DE PROBLEMAS -->
+  <section class="section fade-in delay-2">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">¿POR QUÉ SE <span>TILDA</span> TU RED?</h2>
+    </div>
+
+    <div class="diagnostico-grid">
+      <div class="diag-card danger">
+        <span class="card-icon">⚡</span>
+        <div class="card-title">Causas más frecuentes</div>
+        <div class="card-body">
+          <ul>
+            <li>Saturación del canal Wi-Fi (interferencia vecinal)</li>
+            <li>Modem Huawei sin reinicio técnico periódico</li>
+            <li>DNS lento del proveedor (ISP)</li>
+            <li>QoS deshabilitado — streaming compite con todo</li>
+            <li>Cable coaxial o RJ-45 degradado</li>
+            <li>Firmware de modem desactualizado</li>
+            <li>Señal Wi-Fi a 2.4 GHz saturada en zona urbana</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="diag-card highlight">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">Lo que realmente necesitás</div>
+        <div class="card-body">
+          <ul>
+            <li>Separar tráfico de streaming del resto del hogar</li>
+            <li>Banda 5 GHz exclusiva para Smart TV / decodificador</li>
+            <li>DNS optimizado (Cloudflare o Google)</li>
+            <li>QoS por prioridad de dispositivo o aplicación</li>
+            <li>Revisar potencia de señal real (no la que muestra el ícono)</li>
+            <li>Plan de ancho de banda acorde al consumo real</li>
+            <li>Cable directo para los dispositivos críticos</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIGURACIÓN MODEM HUAWEI -->
+    <div class="config-block">
+      <div class="config-header">
+        <span>// CONFIGURACIÓN ÓPTIMA — MODEM HUAWEI HG8245 / EG8145 / B618</span>
+        <div class="config-dot"></div>
+      </div>
+      <div class="config-body">
+        <div class="config-row">
+          <span class="config-key">DNS Primario</span>
+          <span class="config-val">1.1.1.1</span>
+          <span class="config-note">Cloudflare — el más rápido del mundo</span>
+        </div>
+        <div class="config-row">
+          <span class="config-key">DNS Secundario</span>
+          <span class="config-val">8.8.8.8</span>
+          <span class="config-note">Google DNS — respaldo confiable</span>
+        </div>
+        <div class="config-row">
+          <span class="config-key">Banda 5GHz — Canal</span>
+          <span class="config-val">36 / 40 / 44 / 48</span>
+          <span class="config-note">Canales UNII-1, menor interferencia</span>
+        </div>
+        <div class="config-row">
+          <span class="config-key">Banda 2.4GHz — Canal</span>
+          <span class="config-val">1, 6 o 11</span>
+          <span class="config-note">Únicos canales no superpuestos</span>
+        </div>
+        <div class="config-row">
+          <span class="config-key">MTU</span>
+          <span class="config-val">1500</span>
+          <span class="config-note">Óptimo para streaming / IPTV</span>
+        </div>
+        <div class="config-row">
+          <span class="config-key">QoS — Prioridad</span>
+          <span class="config-val">HABILITADO</span>
+          <span class="config-note">TV / streaming al nivel más alto</span>
+        </div>
+        <div class="config-row">
+          <span class="config-key">Ancho de canal 5GHz</span>
+          <span class="config-val">80 MHz</span>
+          <span class="config-note">Balance velocidad / cobertura</span>
+        </div>
+        <div class="config-row">
+          <span class="config-key">Reinicio programado</span>
+          <span class="config-val">3:00 AM — diario</span>
+          <span class="config-note">Limpia tablas ARP y RAM del modem</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROTOCOLO DE OPTIMIZACIÓN -->
+  <section class="section fade-in delay-3">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">PROTOCOLO DE <span>OPTIMIZACIÓN</span> PASO A PASO</h2>
+    </div>
+
+    <div class="protocol-list">
+      <div class="protocol-step">
+        <span class="step-num">01</span>
+        <div class="step-content">
+          <h3>Medir la velocidad real — no la contratada</h3>
+          <p>Abrí <strong>fast.com</strong> o <strong>speedtest.net</strong> conectado por cable directo al modem. Ese número es tu techo real. Si hay diferencia grande con lo contratado, hay problema en la línea o en el modem.</p>
+        </div>
+        <span class="step-badge critico">CRÍTICO</span>
+      </div>
+
+      <div class="protocol-step">
+        <span class="step-num">02</span>
+        <div class="step-content">
+          <h3>Accedé al panel de tu Huawei (192.168.100.1)</h3>
+          <p>Usuario: admin / admin (o el que figure en el sticker). Desde ahí controlás todo. Si nunca entraste, es hora de conocer tu red por primera vez.</p>
+        </div>
+        <span class="step-badge alto">PASO BASE</span>
+      </div>
+
+      <div class="protocol-step">
+        <span class="step-num">03</span>
+        <div class="step-content">
+          <h3>Cambiá los DNS a 1.1.1.1 / 8.8.8.8</h3>
+          <p>Los DNS de los proveedores argentinos suelen ser lentos y causan demoras de 200-400ms en resolver dominios de streaming. Con Cloudflare bajás eso a 10-20ms. El cambio es inmediato y gratuito.</p>
+        </div>
+        <span class="step-badge alto">ALTO IMPACTO</span>
+      </div>
+
+      <div class="protocol-step">
+        <span class="step-num">04</span>
+        <div class="step-content">
+          <h3>Separar redes: una para TV/streaming, otra para el resto</h3>
+          <p>En el panel Huawei, creá una SSID secundaria en 5 GHz exclusiva para tu Smart TV o Fire Stick. Nombrala "Streaming-5G" y conectá solo los dispositivos críticos. Evitás que el celular del vecino de casa te robe ancho de banda.</p>
+        </div>
+        <span class="step-badge alto">ALTO IMPACTO</span>
+      </div>
+
+      <div class="protocol-step">
+        <span class="step-num">05</span>
+        <div class="step-content">
+          <h3>Habilitar QoS y darle prioridad al streaming</h3>
+          <p>En Configuración Avanzada › QoS, asigná máxima prioridad a la MAC address de tu televisor o al puerto de tu decodificador. Cuando hay competencia de ancho de banda, tu partido siempre gana.</p>
+        </div>
+        <span class="step-badge medio">ESENCIAL</span>
+      </div>
+
+      <div class="protocol-step">
+        <span class="step-num">06</span>
+        <div class="step-content">
+          <h3>Cable UTP Cat6 directo al Smart TV si es posible</h3>
+          <p>La WiFi más potente del mundo no supera a un cable bien conectado. Para señales codificadas y fútbol en vivo, 10 metros de Cat6 eliminan el 90% de los cortes. No es "viejo", es ingeniería.</p>
+        </div>
+        <span class="step-badge medio">RECOMENDADO</span>
+      </div>
+
+      <div class="protocol-step">
+        <span class="step-num">07</span>
+        <div class="step-content">
+          <h3>Actualizar firmware del modem Huawei</h3>
+          <p>En el panel, buscá "Actualización de Software" o "Firmware". Los modelos de FIBERTEL, TELECENTRO y CLARO tienen versiones actualizables. Un firmware viejo tiene bugs de gestión de memoria que causan cuelgues espontáneos.</p>
+        </div>
+        <span class="step-badge medio">IMPORTANTE</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TABLA STREAMING -->
+  <section class="section fade-in delay-4">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">REQUERIMIENTOS REALES DE <span>STREAMING</span></h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>SERVICIO / USO</th>
+            <th>MÍNIMO REAL</th>
+            <th>RECOMENDADO</th>
+            <th>LATENCIA MAX</th>
+            <th>ESTADO</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Fútbol en vivo HD (DirecTV, TyC)</td>
+            <td>8 Mbps</td>
+            <td>15 Mbps</td>
+            <td>&lt;80ms</td>
+            <td><span class="tag tag-verde">VIABLE</span></td>
+          </tr>
+          <tr>
+            <td>Partidos 4K / codificados</td>
+            <td>25 Mbps</td>
+            <td>40 Mbps</td>
+            <td>&lt;50ms</td>
+            <td><span class="tag tag-amarillo">REQUIERE OPTIMIZACIÓN</span></td>
+          </tr>
+          <tr>
+            <td>Netflix / Disney+ 4K HDR</td>
+            <td>15 Mbps</td>
+            <td>25 Mbps</td>
+            <td>&lt;100ms</td>
+            <td><span class="tag tag-verde">ESTÁNDAR</span></td>
+          </tr>
+          <tr>
+            <td>IPTV / Canales IP</td>
+            <td>5 Mbps por canal</td>
+            <td>10 Mbps por canal</td>
+            <td>&lt;30ms</td>
+            <td><span class="tag tag-rojo">CRÍTICO QoS</span></td>
+          </tr>
+          <tr>
+            <td>Videoconferencia simultánea</td>
+            <td>3 Mbps simétrico</td>
+            <td>8 Mbps simétrico</td>
+            <td>&lt;150ms</td>
+            <td><span class="tag tag-verde">OK</span></td>
+          </tr>
+          <tr>
+            <td>Varios dispositivos a la vez</td>
+            <td>30 Mbps</td>
+            <td>60-100 Mbps</td>
+            <td>&lt;60ms</td>
+            <td><span class="tag tag-amarillo">EVALUAR PLAN</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- PANEL DE CONSULTA IA -->
+  <section class="section fade-in delay-4">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">CONSULTA AL <span>ESPECIALISTA</span> IA</h2>
+    </div>
+
+    <!-- MODAL API KEY -->
+    <div class="modal-overlay hidden" id="modalOverlay">
+      <div class="modal-box">
+        <div class="modal-header">
+          <div class="modal-icon">🔑</div>
+          <div>
+            <div class="modal-title">INGRESÁ TU API KEY</div>
+            <div class="modal-subtitle">// anthropic — console.anthropic.com</div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <p class="modal-desc">
+            Para usar el chat con el especialista IA necesitás tu clave de API de Anthropic.<br>
+            Podés obtenerla en <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys → Create Key.
+          </p>
+          <div class="key-input-wrap">
+            <input type="password" class="key-input" id="apiKeyInput" placeholder="sk-ant-api03-..." autocomplete="off" />
+            <button class="toggle-eye" onclick="toggleVerClave()" id="eyeBtn">👁</button>
+          </div>
+          <div class="key-hint">La clave empieza siempre con: sk-ant-</div>
+          <div class="modal-warning">
+            <strong>⚠ Seguridad:</strong> Tu clave se usa solo en esta sesión y nunca se guarda ni se envía a ningún otro servidor. Al cerrar el navegador se borra automáticamente.
+          </div>
+          <div class="modal-footer">
+            <button class="btn-cancelar" onclick="cerrarModal()">CANCELAR</button>
+            <button class="btn-confirmar" id="btnConfirmar" onclick="confirmarClave()">CONFIRMAR</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTÓN ESTADO CLAVE -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; flex-wrap:wrap; gap:8px;">
+      <button class="key-status" id="keyStatusBtn" onclick="abrirModal()">
+        <span class="dot-key" id="dotKey"></span>
+        <span id="keyStatusText">Sin API Key — Clic para configurar</span>
+      </button>
+      <div style="display:flex; gap:8px;">
+        <button onclick="guardarTXT()" title="Guardar reporte como TXT" style="padding:6px 14px;border:1px solid #2a2a2a;background:#141414;color:#666;font-family:monospace;font-size:11px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='#e8ff00';this.style.color='#e8ff00'" onmouseout="this.style.borderColor='#2a2a2a';this.style.color='#666'">⬇ GUARDAR TXT</button>
+        <button onclick="imprimirPDF()" title="Imprimir / Guardar como PDF" style="padding:6px 14px;border:1px solid #2a2a2a;background:#141414;color:#666;font-family:monospace;font-size:11px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='#00ffa3';this.style.color='#00ffa3'" onmouseout="this.style.borderColor='#2a2a2a';this.style.color='#666'">🖨 GUARDAR PDF</button>
+        <button onclick="limpiarReporte()" title="Limpiar reporte" style="padding:6px 14px;border:1px solid #2a2a2a;background:#141414;color:#666;font-family:monospace;font-size:11px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='#ff3b3b';this.style.color='#ff3b3b'" onmouseout="this.style.borderColor='#2a2a2a';this.style.color='#666'">✕ LIMPIAR</button>
+      </div>
+    </div>
+
+    <!-- LAYOUT: CHAT + VISOR LADO A LADO -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;" id="panelGrid">
+
+      <!-- PANEL IZQUIERDO: CHAT -->
+      <div class="ai-panel">
+        <div class="ai-panel-header">
+          <div class="ai-avatar">🛜</div>
+          <div>
+            <div class="ai-name">NetPro Consultor — IA</div>
+            <div class="ai-status">● EN LÍNEA — Especialista Redes 50 años exp.</div>
+          </div>
+        </div>
+
+        <div class="quick-chips">
+          <span class="chip" onclick="setQuestion(this)">WiFi lento</span>
+          <span class="chip" onclick="setQuestion(this)">Huawei se cuelga</span>
+          <span class="chip" onclick="setQuestion(this)">Ver fútbol sin cortes</span>
+          <span class="chip" onclick="setQuestion(this)">Configurar DNS</span>
+          <span class="chip" onclick="setQuestion(this)">¿Qué cable usar?</span>
+          <span class="chip" onclick="setQuestion(this)">Router adicional</span>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <div class="msg msg-bot">
+            Buenas. Soy tu especialista en redes. Contame tu problema y lo analizo. Cada respuesta va a aparecer también en el <strong>VISOR DE REPORTE</strong> de la derecha, donde podés leerla cómodo, guardarla como TXT o imprimirla como PDF.
+          </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+
+        <div class="chat-input-area">
+          <input 
+            type="text" 
+            class="chat-input" 
+            id="userInput" 
+            placeholder="Describí tu problema de red..."
+            onkeydown="if(event.key==='Enter') sendMessage()"
+          >
+          <button class="chat-btn" id="sendBtn" onclick="sendMessage()">ENVIAR</button>
+        </div>
+      </div>
+
+      <!-- PANEL DERECHO: VISOR DE REPORTE -->
+      <div style="border:1px solid #2a2a2a; background:#0d0d0d; display:flex; flex-direction:column; min-height:520px;">
+        <!-- Header visor -->
+        <div style="padding:14px 18px; background:#1a1a1a; border-bottom:1px solid #2a2a2a; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-family:monospace; font-size:11px; color:#e8ff00; letter-spacing:2px;">// VISOR DE REPORTE TÉCNICO</div>
+            <div style="font-size:11px; color:#444; font-family:monospace; margin-top:2px;" id="reporteContador">0 respuestas registradas</div>
+          </div>
+          <div style="width:8px;height:8px;border-radius:50%;background:#2a2a2a;" id="reporteDot"></div>
+        </div>
+
+        <!-- Cuerpo del visor -->
+        <div id="reporteVisor" style="flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:16px;">
+          <div style="text-align:center; padding:40px 20px; color:#2a2a2a;">
+            <div style="font-size:40px; margin-bottom:12px;">📋</div>
+            <div style="font-family:monospace; font-size:12px; line-height:1.7;">Las respuestas del especialista<br>aparecerán aquí formateadas<br>para fácil lectura</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RESPONSIVE: en móvil apila verticalmente -->
+    <style>
+      @media (max-width: 700px) {
+        #panelGrid { grid-template-columns: 1fr !important; }
+      }
+    </style>
+
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">NET<span>PRO</span> CONSULTOR</div>
+    <div class="footer-info">
+      Especialista en Redes · 50+ años · Posgrado + Magistrado<br>
+      Hogares · Empresas · IPTV · Streaming · Huawei
+    </div>
+  </footer>
+
+</div>
+
+<!-- ESTILOS ADICIONALES PARA VISOR -->
+<style>
+  #reporteVisor::-webkit-scrollbar { width: 4px; }
+  #reporteVisor::-webkit-scrollbar-track { background: #0a0a0a; }
+  #reporteVisor::-webkit-scrollbar-thumb { background: #2a2a2a; }
+
+  .reporte-bloque {
+    border: 1px solid #1e1e1e;
+    background: #141414;
+    overflow: hidden;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .reporte-pregunta {
+    padding: 10px 14px;
+    background: rgba(0,255,163,0.05);
+    border-bottom: 1px solid #1e1e1e;
+    border-left: 3px solid #00ffa3;
+    font-size: 12px;
+    color: #00ffa3;
+    font-family: 'IBM Plex Mono', monospace;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .reporte-num {
+    font-size: 10px;
+    color: #333;
+    font-family: 'IBM Plex Mono', monospace;
+    white-space: nowrap;
+  }
+
+  .reporte-cuerpo {
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.75;
+    color: #d0d0d0;
+  }
+
+  .reporte-cuerpo p { margin-bottom: 10px; }
+  .reporte-cuerpo p:last-child { margin-bottom: 0; }
+
+  .reporte-cuerpo strong,
+  .reporte-cuerpo b {
+    color: #e8ff00;
+    font-weight: 700;
+  }
+
+  .reporte-linea {
+    display: block;
+    padding: 4px 0;
+    border-bottom: 1px solid #1a1a1a;
+    color: #d0d0d0;
+  }
+
+  .reporte-linea:last-child { border-bottom: none; }
+
+  .reporte-linea.seccion {
+    color: #e8ff00;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding-top: 10px;
+    margin-top: 4px;
+  }
+
+  .reporte-linea.paso {
+    padding-left: 12px;
+    border-left: 2px solid #e8ff00;
+    margin: 3px 0;
+    color: #f0f0f0;
+  }
+
+  .reporte-linea.item {
+    padding-left: 16px;
+    color: #aaa;
+    font-size: 12.5px;
+  }
+
+  .reporte-linea.item::before {
+    content: '› ';
+    color: #00ffa3;
+  }
+
+  .reporte-timestamp {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #333;
+    padding: 8px 14px;
+    border-top: 1px solid #1a1a1a;
+    text-align: right;
+  }
+
+  /* Estilos de impresión */
+  @media print {
+    body { background: white !important; color: black !important; }
+    .grid-lines, header .credentials, .metrics, .section:not(:last-child), footer { display: none !important; }
+    #panelGrid { grid-template-columns: 1fr !important; }
+    .ai-panel { display: none !important; }
+    #reporteVisor { max-height: none !important; overflow: visible !important; }
+    .reporte-bloque { border: 1px solid #ccc !important; background: white !important; margin-bottom: 16px; }
+    .reporte-pregunta { background: #f0f0f0 !important; color: #006644 !important; border-left-color: #006644 !important; }
+    .reporte-cuerpo { color: #111 !important; }
+    .reporte-cuerpo strong { color: #006644 !important; }
+    .reporte-linea.seccion { color: #006644 !important; }
+    .reporte-linea.paso { border-left-color: #006644 !important; color: #111 !important; }
+    .reporte-linea.item { color: #333 !important; }
+    .reporte-timestamp { color: #888 !important; border-top-color: #ccc !important; }
+    .reporte-num { color: #aaa !important; }
+    #reporteDot, button { display: none !important; }
+  }
+</style>
+
+<script>
+  let API_KEY = '';
+  let reporteCount = 0;
+  let historialMensajes = [];
+
+  // ===== MODAL API KEY =====
+  function abrirModal() {
+    document.getElementById('modalOverlay').classList.remove('hidden');
+    setTimeout(() => document.getElementById('apiKeyInput').focus(), 100);
+  }
+
+  function cerrarModal() {
+    document.getElementById('modalOverlay').classList.add('hidden');
+  }
+
+  function toggleVerClave() {
+    const input = document.getElementById('apiKeyInput');
+    const btn = document.getElementById('eyeBtn');
+    input.type = input.type === 'password' ? 'text' : 'password';
+    btn.textContent = input.type === 'password' ? '👁' : '🙈';
+  }
+
+  function confirmarClave() {
+    const val = document.getElementById('apiKeyInput').value.trim();
+    if (!val.startsWith('sk-ant-')) {
+      document.getElementById('apiKeyInput').style.borderColor = '#ff3b3b';
+      setTimeout(() => { document.getElementById('apiKeyInput').style.borderColor = '#2a2a2a'; }, 2500);
+      return;
+    }
+    API_KEY = val;
+    cerrarModal();
+    actualizarEstadoClave(true);
+    addChatMsg('✅ Clave cargada correctamente. Escribí tu consulta y la respuesta aparecerá aquí y en el visor de reporte de la derecha.', false);
+  }
+
+  function actualizarEstadoClave(activa) {
+    const btn = document.getElementById('keyStatusBtn');
+    const dot = document.getElementById('dotKey');
+    const txt = document.getElementById('keyStatusText');
+    if (activa) {
+      btn.classList.add('activa');
+      dot.style.background = '#00ffa3';
+      txt.textContent = 'API Key activa — Clic para cambiar';
+    } else {
+      btn.classList.remove('activa');
+      dot.style.background = '#ff3b3b';
+      txt.textContent = 'Sin API Key — Clic para configurar';
+    }
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
+  document.getElementById('modalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModal();
+  });
+
+  // ===== CHAT =====
+  function setQuestion(el) {
+    if (!API_KEY) { abrirModal(); return; }
+    document.getElementById('userInput').value = el.textContent;
+    document.getElementById('userInput').focus();
+  }
+
+  function addChatMsg(text, isUser) {
+    const msgs = document.getElementById('chatMessages');
+    const typing = document.getElementById('typingIndicator');
+    const div = document.createElement('div');
+    div.className = 'msg ' + (isUser ? 'msg-user' : 'msg-bot');
+    div.textContent = text;
+    msgs.insertBefore(div, typing);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  // ===== VISOR DE REPORTE =====
+  function agregarReporte(pregunta, respuesta) {
+    reporteCount++;
+    const visor = document.getElementById('reporteVisor');
+    const contador = document.getElementById('reporteContador');
+    const dot = document.getElementById('reporteDot');
+
+    // Limpiar placeholder si existe
+    const placeholder = visor.querySelector('div[style*="text-align:center"]');
+    if (placeholder) placeholder.remove();
+
+    // Actualizar contador y dot
+    contador.textContent = reporteCount + (reporteCount === 1 ? ' respuesta registrada' : ' respuestas registradas');
+    dot.style.background = '#00ffa3';
+
+    // Hora actual
+    const ahora = new Date();
+    const hora = ahora.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+    const fecha = ahora.toLocaleDateString('es-AR');
+
+    // Crear bloque de reporte
+    const bloque = document.createElement('div');
+    bloque.className = 'reporte-bloque';
+
+    // Pregunta del usuario
+    const preguntaDiv = document.createElement('div');
+    preguntaDiv.className = 'reporte-pregunta';
+    preguntaDiv.innerHTML = `<span>❓ ${escapeHtml(pregunta)}</span><span class="reporte-num">#${String(reporteCount).padStart(2,'0')}</span>`;
+    bloque.appendChild(preguntaDiv);
+
+    // Cuerpo formateado de la respuesta
+    const cuerpo = document.createElement('div');
+    cuerpo.className = 'reporte-cuerpo';
+    cuerpo.innerHTML = formatearRespuesta(respuesta);
+    bloque.appendChild(cuerpo);
+
+    // Timestamp
+    const ts = document.createElement('div');
+    ts.className = 'reporte-timestamp';
+    ts.textContent = `🕐 ${fecha} — ${hora}`;
+    bloque.appendChild(ts);
+
+    visor.appendChild(bloque);
+    visor.scrollTop = visor.scrollHeight;
+  }
+
+  function escapeHtml(text) {
+    return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function formatearRespuesta(texto) {
+    // Convertir markdown básico a HTML con estilos de reporte
+    const lineas = texto.split('\n');
+    let html = '';
+    let enLista = false;
+
+    for (let linea of lineas) {
+      const l = linea.trim();
+      if (!l) { if (enLista) { enLista = false; } continue; }
+
+      // Detectar encabezados (## o **TEXTO**)
+      if (l.startsWith('## ') || l.startsWith('# ')) {
+        html += `<span class="reporte-linea seccion">${escapeHtml(l.replace(/^#+\s*/,''))}</span>`;
+      }
+      // Detectar pasos numerados (1. 2. 3.)
+      else if (/^\d+[\.\-]\s/.test(l)) {
+        const contenido = l.replace(/^\d+[\.\-]\s*/,'');
+        html += `<span class="reporte-linea paso">${formatearTexto(contenido)}</span>`;
+      }
+      // Detectar listas con - o •
+      else if (l.startsWith('- ') || l.startsWith('• ') || l.startsWith('* ')) {
+        const contenido = l.replace(/^[-•*]\s*/,'');
+        html += `<span class="reporte-linea item">${formatearTexto(contenido)}</span>`;
+      }
+      // Texto normal
+      else {
+        html += `<p>${formatearTexto(escapeHtml(l))}</p>`;
+      }
+    }
+    return html || `<p>${escapeHtml(texto)}</p>`;
+  }
+
+  function formatearTexto(texto) {
+    // Bold **texto** o __texto__
+    return escapeHtml(texto)
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/__(.+?)__/g, '<strong>$1</strong>')
+      .replace(/`(.+?)`/g, '<code style="background:#0a0a0a;padding:1px 5px;font-family:monospace;color:#e8ff00;font-size:12px;">$1</code>');
+  }
+
+  // ===== GUARDAR TXT =====
+  function guardarTXT() {
+    const bloques = document.querySelectorAll('.reporte-bloque');
+    if (!bloques.length) { alert('No hay respuestas en el reporte todavía.'); return; }
+
+    let txt = '═══════════════════════════════════════════════════\n';
+    txt += '   NETPRO CONSULTOR — REPORTE TÉCNICO DE RED\n';
+    txt += '   Especialista en Redes · 50+ años · Posgrado\n';
+    txt += '═══════════════════════════════════════════════════\n\n';
+
+    const ahora = new Date();
+    txt += `Fecha: ${ahora.toLocaleDateString('es-AR')}   Hora: ${ahora.toLocaleTimeString('es-AR')}\n\n`;
+
+    bloques.forEach((b, i) => {
+      const preg = b.querySelector('.reporte-pregunta span')?.textContent || '';
+      const cuerpo = b.querySelector('.reporte-cuerpo')?.innerText || '';
+      const ts = b.querySelector('.reporte-timestamp')?.textContent || '';
+      txt += `───────────────────────────────────────────────────\n`;
+      txt += `CONSULTA #${String(i+1).padStart(2,'0')}: ${preg.replace('❓ ','')}\n`;
+      txt += `───────────────────────────────────────────────────\n`;
+      txt += cuerpo + '\n\n';
+      txt += ts + '\n\n';
+    });
+
+    txt += '═══════════════════════════════════════════════════\n';
+    txt += 'Generado por NetPro Consultor — custodiaserrana-lab\n';
+
+    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `NetPro-Reporte-${ahora.toISOString().slice(0,10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ===== IMPRIMIR / PDF =====
+  function imprimirPDF() {
+    const bloques = document.querySelectorAll('.reporte-bloque');
+    if (!bloques.length) { alert('No hay respuestas en el reporte todavía.'); return; }
+    window.print();
+  }
+
+  // ===== LIMPIAR REPORTE =====
+  function limpiarReporte() {
+    if (!confirm('¿Limpiar todo el reporte? No se puede deshacer.')) return;
+    reporteCount = 0;
+    historialMensajes = [];
+    document.getElementById('reporteContador').textContent = '0 respuestas registradas';
+    document.getElementById('reporteDot').style.background = '#2a2a2a';
+    const visor = document.getElementById('reporteVisor');
+    visor.innerHTML = `<div style="text-align:center; padding:40px 20px; color:#2a2a2a;">
+      <div style="font-size:40px; margin-bottom:12px;">📋</div>
+      <div style="font-family:monospace; font-size:12px; line-height:1.7;">Las respuestas del especialista<br>aparecerán aquí formateadas<br>para fácil lectura</div>
+    </div>`;
+    const msgs = document.getElementById('chatMessages');
+    msgs.innerHTML = `<div class="msg msg-bot">Reporte limpiado. Listo para nueva consulta.</div>`;
+  }
+
+  // ===== ENVIAR MENSAJE =====
+  async function sendMessage() {
+    if (!API_KEY) { abrirModal(); return; }
+
+    const input = document.getElementById('userInput');
+    const btn = document.getElementById('sendBtn');
+    const typing = document.getElementById('typingIndicator');
+    const text = input.value.trim();
+    if (!text) return;
+
+    addChatMsg(text, true);
+    historialMensajes.push({ role: 'user', content: text });
+    input.value = '';
+    btn.disabled = true;
+    typing.classList.add('visible');
+
+    const msgs = document.getElementById('chatMessages');
+    msgs.scrollTop = msgs.scrollHeight;
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1200,
+          system: `Sos un especialista en redes de comunicaciones con más de 50 años de experiencia profesional. Tenés posgrado y magistrado en telecomunicaciones. Sos experto en redes hogareñas y empresariales, especialmente en:
+- Módems Huawei (HG8245, EG8145, B618, HG532 y similares)
+- Optimización para streaming, IPTV, fútbol en vivo, señales codificadas (DirecTV, TyC, ESPN, Flow)
+- Configuración de QoS, DNS, canales WiFi, separación de redes
+- Diagnóstico de latencia, buffering, cortes de señal y cuelgues
+- Routers TP-Link, Arris, Motorola, ZTE y equipos hogareños en general
+
+FORMATO DE RESPUESTA: Usá siempre este formato para que sea fácil de leer en el reporte:
+- Empezá con una línea de diagnóstico directo
+- Usá ** para resaltar términos técnicos importantes
+- Usá numeración (1. 2. 3.) para pasos a seguir
+- Usá guiones (- ) para listas de opciones o causas
+- Separás secciones con líneas vacías
+- Respondés en español rioplatense
+- Máximo 5 párrafos, directo y accionable`,
+          messages: historialMensajes
+        })
+      });
+
+      const data = await response.json();
+      typing.classList.remove('visible');
+
+      if (data.error) {
+        const errMsg = data.error.type === 'authentication_error'
+          ? '❌ API Key incorrecta o vencida. Hacé clic en el botón de clave para actualizarla.'
+          : 'Error: ' + (data.error.message || 'Problema con la API.');
+        addChatMsg(errMsg, false);
+        if (data.error.type === 'authentication_error') { API_KEY = ''; actualizarEstadoClave(false); }
+      } else {
+        const reply = data.content?.find(b => b.type === 'text')?.text || 'Sin respuesta.';
+        historialMensajes.push({ role: 'assistant', content: reply });
+        // Mostrar versión corta en el chat
+        const resumen = reply.length > 180 ? reply.slice(0, 180) + '... [ver reporte →]' : reply;
+        addChatMsg(resumen, false);
+        // Mostrar completo y formateado en el visor
+        agregarReporte(text, reply);
+      }
+    } catch (err) {
+      typing.classList.remove('visible');
+      addChatMsg('Error de conexión. Revisá tu red e intentá de nuevo.', false);
+    }
+
+    btn.disabled = false;
+    input.focus();
+  }
+</script>
+
+</body>
+</html>
